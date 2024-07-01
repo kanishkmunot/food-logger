@@ -30,11 +30,11 @@ document.getElementById('foodForm').addEventListener('submit', function(event) {
             // Reload the list of food entries
             loadFoodEntries();
         } else {
-            alert('Failed to add food.');
+            throw new Error('Failed to add food.'); // Throw an error for non-200 status codes
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Error adding food:', error);
         alert('Failed to add food.');
     });
 });
@@ -42,7 +42,12 @@ document.getElementById('foodForm').addEventListener('submit', function(event) {
 // Function to load food entries from the server and display them
 function loadFoodEntries() {
     fetch('/api/food')
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch food entries.'); // Throw an error for non-200 status codes
+        }
+        return response.json();
+    })
     .then(foodEntries => {
         const foodList = document.getElementById('foodList');
         foodList.innerHTML = ''; 
@@ -68,9 +73,10 @@ function loadFoodEntries() {
         });
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Error loading food entries:', error);
         alert('Failed to load food entries.');
     });
 }
 
+// Initial load of food entries
 loadFoodEntries();
