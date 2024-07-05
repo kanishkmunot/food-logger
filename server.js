@@ -12,7 +12,7 @@ const app = express();
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // Parse JSON bodies
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads'))); // Serve uploads statically
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -36,50 +36,40 @@ mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
 const foodSchema = new mongoose.Schema({
     name: String,
     image: String,
-    timestamp: { type: Date, default: Date.now }
+    timestamp: Date
 });
 
 const Food = mongoose.model('Food', foodSchema);
 
-// Routes
-app.get('/', (req, res) => {
-    console.log('GET request to /');
-    res.send('Welcome to the Food Logger app!');
-});
-
+// API Routes
 app.post('/api/food', upload.single('foodImage'), async (req, res) => {
-    console.log('POST request to /api/food');
-    console.log('Request body:', req.body);
-    console.log('Request file:', req.file);
-
-    const { foodName } = req.body;
-    const foodImage = req.file.filename;
-
-    const newFood = new Food({ name: foodName, image: foodImage });
     try {
+        const { foodName, foodTimestamp } = req.body;
+        const newFood = new Food({
+            name: foodName,
+            image: req.file.filename,
+            timestamp: new Date(foodTimestamp)
+        });
         await newFood.save();
-        console.log('Food added successfully');
-        res.status(200).send('Food added');
+        res.status(201).json(newFood);
     } catch (error) {
         console.error('Error adding food:', error);
-        res.status(500).send(error.message);
+        res.status(500).json({ message: 'Failed to add food.' });
     }
 });
 
 app.get('/api/food', async (req, res) => {
-    console.log('GET request to /api/food');
     try {
         const foodEntries = await Food.find().sort({ timestamp: -1 });
-        console.log('Retrieved food entries:', foodEntries);
-        res.json(foodEntries);
+        res.status(200).json(foodEntries);
     } catch (error) {
-        console.error('Error retrieving food entries:', error);
-        res.status(500).send(error.message);
+        console.error('Error fetching food entries:', error);
+        res.status(500).json({ message: 'Failed to fetch food entries.' });
     }
 });
 
 // Start the server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
+    console.log(`Server is running on port ${port}`);
 });

@@ -1,21 +1,26 @@
-// Add event listener to the form to handle form submission
 document.getElementById('foodForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the form from submitting the traditional way
 
     // Get the values from the input fields
     const foodName = document.getElementById('foodName').value;
     const foodImage = document.getElementById('foodImage').files[0];
+    const foodDate = document.getElementById('foodDate').value;
+    const foodTime = document.getElementById('foodTime').value;
 
     // Check if the inputs are not empty
-    if (!foodName || !foodImage) {
-        alert('Please enter a food name and select an image.');
+    if (!foodName || !foodImage || !foodDate || !foodTime) {
+        alert('Please enter all the required fields.');
         return;
     }
+
+    // Combine date and time into a single datetime string
+    const foodTimestamp = new Date(`${foodDate}T${foodTime}`);
 
     // Create a FormData object to send the form data
     const formData = new FormData();
     formData.append('foodName', foodName);
     formData.append('foodImage', foodImage);
+    formData.append('foodTimestamp', foodTimestamp.toISOString());
 
     // Use the fetch API to send the form data to the server
     fetch('/api/food', {
@@ -27,6 +32,8 @@ document.getElementById('foodForm').addEventListener('submit', function(event) {
             // Clear the input fields
             document.getElementById('foodName').value = '';
             document.getElementById('foodImage').value = '';
+            document.getElementById('foodDate').value = '';
+            document.getElementById('foodTime').value = '';
             // Reload the list of food entries
             loadFoodEntries();
         } else {
