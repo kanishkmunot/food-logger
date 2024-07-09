@@ -11,13 +11,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             margin: 0;
             padding: 20px;
             background-color: #f0f4f8;
             min-height: 100vh;
             box-sizing: border-box;
-            position: relative;
         }
         h1 {
             margin-bottom: 20px;
@@ -47,6 +45,9 @@
             max-width: 300px;
             border: 1px solid #ddd;
             border-radius: 5px;
+        }
+        input[type="datetime-local"]::-webkit-datetime-edit-text {
+            color: #888;
         }
         button {
             background-color: #007bff;
@@ -89,26 +90,34 @@
             text-align: center;
             color: #fff;
             font-size: 12px;
-            position: absolute;
-            bottom: 0;
             width: 100%;
             padding: 10px 0;
             background-color: rgba(0, 0, 0, 0.8);
+            margin-top: auto; /* Pushes footer to the bottom */
+        }
+        #container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            align-items: center;
         }
     </style>
 </head>
 <body>
-    <h1>Food Logger 2.0</h1>
-    <form id="foodForm">
-        <input type="text" id="foodName" placeholder="Enter food name" required>
-        <input type="file" id="foodImage" accept="image/*" required>
-        <input type="datetime-local" id="foodTimestamp" required>
-        <button type="submit">Add Food</button>
-    </form>
-    <div id="foodList"></div>
-    <footer>
-        <p>© 2024 Kanishk Munot. All rights reserved.</p>
-    </footer>
+    <div id="container">
+        <h1>Food Logger 2.0</h1>
+        <form id="foodForm">
+            <input type="text" id="foodName" placeholder="Enter food name" required>
+            <input type="file" id="foodImage" accept="image/*" required>
+            <input type="datetime-local" id="foodTimestamp" placeholder="Select date and time" required>
+            <button type="submit">Add Food</button>
+        </form>
+        <div id="foodList"></div>
+        <footer>
+            <p>© 2024 Kanishk Munot. All rights reserved.</p>
+        </footer>
+    </div>
     <script src="app.js"></script>
 </body>
 </html>
