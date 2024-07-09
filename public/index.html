@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Food Logger</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -16,12 +16,16 @@
             background-color: #f0f4f8;
             min-height: 100vh;
             box-sizing: border-box;
+            background-image: linear-gradient(to right top, #2b89ff, #0264d1, #004da8, #003e80, #002f5a);
+            background-size: cover;
+            background-attachment: fixed;
+            color: #333; /* Default text color */
         }
         h1 {
             margin-bottom: 20px;
-            color: #333;
             text-align: center;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #fff; /* Heading text color */
         }
         form {
             display: flex;
@@ -30,7 +34,7 @@
             background-color: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease-in-out;
             width: 90%;
             max-width: 400px;
@@ -43,33 +47,36 @@
             padding: 10px;
             width: 100%;
             max-width: 300px;
-            border: 1px solid #ddd;
+            border: none;
             border-radius: 5px;
+            font-size: 1rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         input[type="datetime-local"]::-webkit-datetime-edit-text {
             color: #888;
         }
         button {
-            background-color: #007bff;
+            background-color: #ff6f61;
             color: #fff;
-            border: none;
             cursor: pointer;
             transition: background-color 0.3s ease-in-out;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #f96356;
         }
         #foodList {
             margin-top: 20px;
+            margin-bottom: 60px; /* Adjusted margin to prevent overlap with footer */
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
         .food-entry {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.95);
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             padding: 15px;
             margin-bottom: 15px;
             width: 90%;
@@ -87,20 +94,21 @@
             margin-top: 10px;
         }
         footer {
-            text-align: center;
+            background-color: #333;
             color: #fff;
-            font-size: 12px;
-            width: 100%;
+            text-align: center;
             padding: 10px 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            margin-top: auto; /* Pushes footer to the bottom */
-        }
-        #container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
             width: 100%;
-            align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            z-index: -1; /* Pushed behind other content initially */
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0; /* Initially hidden */
+        }
+        footer.visible {
+            z-index: 999;
+            opacity: 1; /* Visible when scrolled to the bottom */
         }
     </style>
 </head>
@@ -110,14 +118,27 @@
         <form id="foodForm">
             <input type="text" id="foodName" placeholder="Enter food name" required>
             <input type="file" id="foodImage" accept="image/*" required>
-            <input type="datetime-local" id="foodTimestamp" placeholder="Select date and time" required>
+            <input type="datetime-local" id="foodTimestamp" required>
             <button type="submit">Add Food</button>
         </form>
         <div id="foodList"></div>
-        <footer>
-            <p>© 2024 Kanishk Munot. All rights reserved.</p>
-        </footer>
     </div>
+    <footer>
+        <p>© 2024 Kanishk Munot. All rights reserved.</p>
+    </footer>
     <script src="app.js"></script>
+    <script>
+        document.addEventListener('scroll', function() {
+            const footer = document.querySelector('footer');
+            const scrollHeight = window.scrollY;
+            const fullHeight = document.body.scrollHeight - window.innerHeight;
+
+            if (scrollHeight >= fullHeight) {
+                footer.classList.add('visible');
+            } else {
+                footer.classList.remove('visible');
+            }
+        });
+    </script>
 </body>
 </html>

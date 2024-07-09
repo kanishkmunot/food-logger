@@ -26,13 +26,26 @@ document.getElementById('foodForm').addEventListener('submit', function(event) {
     })
     .then(response => {
         if (response.ok) {
+            // Trigger success animation and background change
+            document.body.classList.add('success');
+            setTimeout(() => {
+                document.body.classList.remove('success');
+            }, 1000); // Remove class after animation duration
+
             // Clear the input fields
             document.getElementById('foodName').value = '';
             document.getElementById('foodImage').value = '';
             document.getElementById('foodTimestamp').value = '';
+
             // Reload the list of food entries
             loadFoodEntries();
         } else {
+            // Trigger failure animation and background change
+            document.body.classList.add('failure');
+            setTimeout(() => {
+                document.body.classList.remove('failure');
+            }, 1000); // Remove class after animation duration
+
             throw new Error('Failed to add food.'); // Throw an error for non-200 status codes
         }
     })
@@ -53,11 +66,11 @@ function loadFoodEntries() {
     })
     .then(foodEntries => {
         const foodList = document.getElementById('foodList');
-        foodList.innerHTML = ''; 
+        foodList.innerHTML = '';
 
         foodEntries.forEach(entry => {
             const foodDiv = document.createElement('div');
-            foodDiv.className = 'food-entry'; 
+            foodDiv.className = 'food-entry';
 
             const foodName = document.createElement('h3');
             foodName.textContent = entry.name;
