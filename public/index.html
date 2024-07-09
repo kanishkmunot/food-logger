@@ -92,34 +92,23 @@
             position: absolute;
             bottom: 0;
             width: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
             padding: 10px 0;
-        }
-        @media (max-width: 768px) {
-            form, .food-entry {
-                width: 90%;
-                max-width: 350px;
-            }
-        }
-        @media (max-width: 480px) {
-            form, .food-entry {
-                width: 100%;
-                max-width: 300px;
-            }
+            background-color: rgba(0, 0, 0, 0.8);
         }
     </style>
 </head>
 <body>
-    <h1>Food Logger 1.0</h1>
+    <h1>Food Logger</h1>
     <form id="foodForm">
-        <input type="text" id="foodName" placeholder="Food Name" required>
+        <input type="text" id="foodName" placeholder="Enter food name" required>
         <input type="file" id="foodImage" accept="image/*" required>
-        <input type="date" id="foodDate" required>
-        <input type="time" id="foodTime" required>
+        <input type="datetime-local" id="foodTimestamp" required>
         <button type="submit">Add Food</button>
     </form>
     <div id="foodList"></div>
-    <footer>Made by Kanishk Munot &copy; 2024</footer>
+    <footer>
+        <p>© 2024 Food Logger. All rights reserved.</p>
+    </footer>
     <script src="app.js"></script>
 </body>
 </html>

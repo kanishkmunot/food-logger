@@ -3,6 +3,7 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
+const fs = require('fs');
 require('dotenv').config(); // Load environment variables from .env file
 
 // Initialize express app
@@ -11,16 +12,9 @@ const app = express();
 // Middleware
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // Parse JSON bodies
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'public/uploads'))); // Serve uploads statically
 
 // Configure multer for file uploads
-const storage = multer.diskStorage({
-    destination: './public/uploads',
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}_${file.originalname}`);
-    }
-});
+const storage = multer.memoryStorage(); // Store files in memory
 const upload = multer({ storage: storage });
 
 // MongoDB setup
@@ -45,11 +39,20 @@ const Food = mongoose.model('Food', foodSchema);
 app.post('/api/food', upload.single('foodImage'), async (req, res) => {
     try {
         const { foodName, foodTimestamp } = req.body;
+        if (!req.file) {
+            return res.status(400).json({ message: 'Image file is required.' });
+        }
+
+        const imageBuffer = req.file.buffer;
+        const imageBase64 = imageBuffer.toString('base64');
+        const imageDataUrl = `data:${req.file.mimetype};base64,${imageBase64}`;
+
         const newFood = new Food({
             name: foodName,
-            image: req.file.filename,
+            image: imageDataUrl,
             timestamp: new Date(foodTimestamp)
         });
+
         await newFood.save();
         res.status(201).json(newFood);
     } catch (error) {
