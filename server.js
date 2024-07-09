@@ -3,22 +3,22 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
-const fs = require('fs');
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config();
 
 // Initialize express app
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable CORS for all routes
-app.use(express.json()); // Parse JSON bodies
+app.use(cors());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files
 
-// Configure multer for file uploads
-const storage = multer.memoryStorage(); // Store files in memory
+// Configure multer for file uploads with in-memory storage
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // MongoDB setup
-const mongoUri = process.env.DB_URI; // Use environment variable for MongoDB URI
+const mongoUri = process.env.DB_URI;
 mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log('MongoDB connected successfully');
@@ -35,7 +35,6 @@ const foodSchema = new mongoose.Schema({
 
 const Food = mongoose.model('Food', foodSchema);
 
-// API Routes
 app.post('/api/food', upload.single('foodImage'), async (req, res) => {
     try {
         const { foodName, foodTimestamp } = req.body;
@@ -69,6 +68,11 @@ app.get('/api/food', async (req, res) => {
         console.error('Error fetching food entries:', error);
         res.status(500).json({ message: 'Failed to fetch food entries.' });
     }
+});
+
+// Serve index.html for the root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start the server
